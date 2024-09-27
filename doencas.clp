@@ -102,34 +102,19 @@
 ; Regra de Diagnóstico Geral
 (defrule diagnostico-geral
    ?sintomasObs <- (Sintomas-Observados (sintomas $?obs))
-   (Doenca (nome ?nome) 
-           (sintomas $?sint)
-           (tratamento $?trat)
-           (prevencao $?prev))
-   (test (subsetp $?sint $?obs))
+   ?doenca <- (Doenca (nome ?nome) 
+                      (sintomas $?sint)
+                      (tratamento $?trat)
+                      (prevencao $?prev))
+   (test (subsetp $?obs $?sint))
    =>
    (printout t "----------------------------------------" crlf)
    (printout t "Doença Identificada: " ?nome crlf)
    (printout t "Tratamento: " (join-with-comma $?trat) crlf)
    
-   ;; Verifica se há prevenção disponível
-   (if (neq (length$ $?prev) 0) then
-      (printout t "Prevenção: " (join-with-comma $?prev) crlf)
-      (printout t "----------------------------------------" crlf))
-   
    (if (eq (length$ $?prev) 0) then
       (printout t "Prevenção: Nenhuma informação disponível." crlf)
-      (printout t "----------------------------------------" crlf))
+      else
+      (printout t "Prevenção: " (join-with-comma $?prev) crlf))
+   (printout t "----------------------------------------" crlf)
 )
-
-; Inserir os Sintomas Observados
-(assert (Sintomas-Observados 
-            (sintomas "Febre alta" 
-                     "Erupções cutâneas" 
-                     "Coceira intensa" 
-                     "Cansaço" 
-                     "Cefaleia")))
-
-; Executar o Motor de Inferência
-(reset)
-(run)
