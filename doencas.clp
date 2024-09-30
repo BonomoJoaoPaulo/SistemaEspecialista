@@ -12,11 +12,11 @@
       (nome "Catapora")
       (sintomas 
          (create$ "Erupções cutâneas" "Bolhas de água" "Coceira intensa" "Febre alta" "Cansaço" 
-                  "Cefaleia" "Perda de apetite"))
+                  "Cefaleia" "Perda de apetite" "Pintinhas vermelhas"))
       (tratamento 
-         (create$ "Repouso" "Ingestão de líquidos" "Evitar coçar as feridas"))
+         (create$ "Repouso" "Hidratação" "Evitar coçar as feridas" "Paracetamol" "Dipirona" "Aciclovir"))
       (prevencao 
-         (create$ "Vacina Varicela")))
+         (create$ "Vacina Contra Varicela")))
    
    ;; Caxumba
    (Doenca 
@@ -26,8 +26,9 @@
                   "Dores musculares" "Fraqueza" "Febre" "Calafrios" "Dor ao mastigar ou engolir"
                   "Orquite" "Ooforite" "Meningite" "Diminuição da capacidade auditiva"))
       (tratamento 
-         (create$ "Repouso" "Uso de analgésicos"))
-      (prevencao nil))
+         (create$ "Repouso" "Hidratação" "Paracetamol" "Dipirona" "Ibuprofeno"))
+      (prevencao
+         (create$ "Vacina Tríplice Viral")))
    
    ;; Coqueluche
    (Doenca 
@@ -36,7 +37,7 @@
          (create$ "Tosse intensa e persistente" "Som de guincho ao inspirar" "Espirros" 
                   "Coriza" "Febre leve" "Vômito após tossir" "Cansaço" "Apneia em bebês"))
       (tratamento 
-         (create$ "Antibióticos" "Medicamentos para alívio da tosse" "Hidratação" "Repouso"))
+         (create$ "Repouso" "Hidratação" "Paracetamol" "Dipirona" "Azitromicina"))
       (prevencao 
          (create$ "Vacina DTP")))
    
@@ -47,7 +48,7 @@
          (create$ "Febre" "Rigidez na nuca" "Dores de cabeça fortes" "Vômito" "Mal-estar" 
                   "Calafrios" "Dores musculares" "Confusão mental"))
       (tratamento 
-         (create$ "Antibióticos" "Hidratação" "Repouso"))
+         (create$ "Repouso" "Hidratação" "Paracetamol" "Dipirona" "Ibuprofeno" "Ceftriaxona"))
       (prevencao 
          (create$ "Vacina anti HIB")))
    
@@ -58,31 +59,31 @@
          (create$ "Febre" "Dores de cabeça" "Dores de garganta" "Coriza" "Vômitos" 
                   "Rigidez de nuca" "Paralisia"))
       (tratamento 
-         (create$ "Repouso" "Hidratação"))
+         (create$ "Repouso" "Hidratação" "Paracetamol"))
       (prevencao 
-         (create$ "Vacina Sabin" "Vacina anti-pólio")))
+         (create$ "Vacina Anti-Pólio")))
    
    ;; Rubéola
    (Doenca 
       (nome "Rubéola")
       (sintomas 
          (create$ "Febre alta" "Cefaleia" "Mal-estar" "Dor de garganta" 
-                  "Aumento das glândulas no pescoço" "Pintinhas vermelhas na pele"))
+                  "Aumento das glândulas no pescoço" "Pintinhas vermelhas"))
       (tratamento 
-         (create$ "Repouso" "Alívio dos sintomas"))
+         (create$ "Repouso" "Hidratação" "Paracetamol" "Dipirona" "Ibuprofeno"))
       (prevencao 
-         (create$ "Vacina tríplice viral")))
+         (create$ "Vacina Tríplice Viral")))
    
    ;; Sarampo
    (Doenca 
       (nome "Sarampo")
       (sintomas 
          (create$ "Febre" "Tosse" "Olhos inchados" "Ínguas no pescoço" "Pintinhas vermelhas" 
-                  "Desânimo" "Coceira" "Descamação da pele"))
+                  "Desânimo" "Coceira"))
       (tratamento 
-         (create$ "Repouso absoluto" "Medicação para sintomas" "Antibióticos para infecções"))
+         (create$ "Repouso absoluto" "Hidratação" "Paracetamol" "Dipirona"))
       (prevencao 
-         (create$ "Vacina contra o sarampo")))
+         (create$ "Vacina Tríplice Viral")))
 )
 
 ; Template para Sintomas Observados
@@ -106,15 +107,23 @@
                       (sintomas $?sint)
                       (tratamento $?trat)
                       (prevencao $?prev))
-   (test (subsetp $?obs $?sint))
    =>
-   (printout t "----------------------------------------" crlf)
-   (printout t "Doença Identificada: " ?nome crlf)
-   (printout t "Tratamento: " (join-with-comma $?trat) crlf)
-   
-   (if (eq (length$ $?prev) 0) then
-      (printout t "Prevenção: Nenhuma informação disponível." crlf)
-      else
-      (printout t "Prevenção: " (join-with-comma $?prev) crlf))
-   (printout t "----------------------------------------" crlf)
+   (printout t "Sintomas Observados: " $?obs crlf)
+   (if (subsetp $?obs $?sint)
+       then
+          (printout t "----------------------------------------" crlf)
+          (printout t "Possível Doença: " ?nome crlf)
+          (printout t "Conjunto de sintomas encontrado para a doença." crlf)
+          (printout t "Sintomas da Doença: " $?sint crlf)
+          (printout t "Tratamento: " (join-with-comma $?trat) crlf)
+          (if (eq (length$ $?prev) 0)
+             then
+                (printout t "Prevenção: Nenhuma informação disponível." crlf)
+             else
+                (printout t "Prevenção: " (join-with-comma $?prev) crlf))
+          (printout t "----------------------------------------" crlf)
+       else
+          (printout t "Nenhuma subconjunto de sintomas encontrado para " ?nome crlf)
+          (printout t "----------------------------------------" crlf)
+   )
 )
